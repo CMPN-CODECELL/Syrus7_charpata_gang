@@ -15,6 +15,7 @@ import WhatIf from './pages/WhatIf'
 import BottleneckMap from './pages/BottleneckMap'
 import Reports from './pages/Reports'
 import Predictions from './pages/Predictions'
+import DesignSystem from './pages/DesignSystem'
 
 export default function App() {
   return (
@@ -37,6 +38,8 @@ export default function App() {
           <Route path="what-if" element={<WhatIf />} />
           <Route path="reports" element={<Reports />} />
           <Route path="predictions" element={<Predictions />} />
+          <Route path="design-system" element={<DesignSystem />} />
+          <Route path="sustainability" element={<DesignSystem />} />
         </Route>
       </Routes>
     </HashRouter>

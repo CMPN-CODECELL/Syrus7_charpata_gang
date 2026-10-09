@@ -10,6 +10,9 @@ import MumbaiSurveillance from './pages/MumbaiSurveillance'
 import FindHospital from './pages/FindHospital'
 import Departments from './pages/Departments'
 import Recommendations from './pages/Recommendations'
+import CommandCentre from './pages/CommandCentre'
+import WhatIf from './pages/WhatIf'
+import BottleneckMap from './pages/BottleneckMap'
 
 export default function App() {
   return (
@@ -19,7 +22,8 @@ export default function App() {
           <Route index element={<Overview />} />
           <Route path="patient-flow" element={<PatientFlow />} />
           <Route path="resources-staff" element={<ResourcesStaff />} />
-          <Route path="cascade-impact" element={<CascadeImpact />} />
+          <Route path="cascade-impact" element={<BottleneckMap />} />
+          <Route path="bottleneck-map" element={<BottleneckMap />} />
           <Route path="alerts" element={<Alerts />} />
           <Route path="sustainability" element={<Sustainability />} />
           <Route path="mumbai-surveillance" element={<MumbaiSurveillance />} />
@@ -27,6 +31,8 @@ export default function App() {
           <Route path="departments" element={<Departments />} />
           <Route path="view-panels" element={<Departments />} />
           <Route path="recommendations" element={<Recommendations />} />
+          <Route path="command-centre" element={<CommandCentre />} />
+          <Route path="what-if" element={<WhatIf />} />
         </Route>
       </Routes>
     </BrowserRouter>

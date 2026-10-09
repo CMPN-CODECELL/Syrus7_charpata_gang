@@ -13,6 +13,8 @@ import Recommendations from './pages/Recommendations'
 import CommandCentre from './pages/CommandCentre'
 import WhatIf from './pages/WhatIf'
 import BottleneckMap from './pages/BottleneckMap'
+import Reports from './pages/Reports'
+import Predictions from './pages/Predictions'
 
 export default function App() {
   return (
@@ -33,6 +35,8 @@ export default function App() {
           <Route path="recommendations" element={<Recommendations />} />
           <Route path="command-centre" element={<CommandCentre />} />
           <Route path="what-if" element={<WhatIf />} />
+          <Route path="reports" element={<Reports />} />
+          <Route path="predictions" element={<Predictions />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -1,17 +1,20 @@
-
 from contextlib import asynccontextmanager
+from typing import Optional
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import select, text
 
 from backend.database import Base, SessionLocal, engine
+from backend.forecasting import (
+    calculate_backtest_validation,
+    forecast_department_bottlenecks,
+)
 from backend.models import Alert, Department, User
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Ensure the database tables exist when the API starts.
     Base.metadata.create_all(bind=engine)
     yield
 
@@ -23,7 +26,6 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Allow our local React/Vite frontend to communicate with this API.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -94,11 +96,11 @@ def get_alerts():
             }
             for alert in alerts
         ]
-    
+
+
 @app.get("/api/analytics/overview")
 def analytics_overview():
     with engine.connect() as conn:
-        # Overall statistics
         total_admissions = conn.execute(
             text("SELECT COUNT(*) FROM hospital_admissions")
         ).scalar_one()
@@ -121,7 +123,6 @@ def analytics_overview():
             """)
         ).scalar()
 
-        # Admission categories
         admissions_by_type = conn.execute(
             text("""
                 SELECT admission_type, COUNT(*) AS count
@@ -131,7 +132,6 @@ def analytics_overview():
             """)
         ).mappings().all()
 
-        # Most common recorded medical conditions
         admissions_by_condition = conn.execute(
             text("""
                 SELECT medical_condition, COUNT(*) AS count
@@ -142,7 +142,6 @@ def analytics_overview():
             """)
         ).mappings().all()
 
-        # Patient services
         stays_by_service = conn.execute(
             text("""
                 SELECT service, COUNT(*) AS count
@@ -152,7 +151,6 @@ def analytics_overview():
             """)
         ).mappings().all()
 
-        # Historical monthly admission trends
         admissions_by_month = conn.execute(
             text("""
                 SELECT substr(date_of_admission, 1, 7) AS month,
@@ -163,7 +161,6 @@ def analytics_overview():
             """)
         ).mappings().all()
 
-        # Historical monthly patient arrivals
         arrivals_by_month = conn.execute(
             text("""
                 SELECT substr(arrival_date, 1, 7) AS month,
@@ -198,3 +195,23 @@ def analytics_overview():
             "live hospital occupancy, queues, or staff availability."
         ),
     }
+
+
+@app.get("/api/forecasting/bottlenecks")
+def get_forecasting_bottlenecks(
+    arrivals: float = Query(0.0, description="Demand increase percentage (0-50)"),
+    staff_shortage: int = Query(0, description="Additional staff unavailable (0-4)"),
+    season: str = Query("Normal", description="Normal, Monsoon, Respiratory season, Outbreak"),
+    scanner_available: bool = Query(True, description="Whether primary CT scanner is operational"),
+):
+    return forecast_department_bottlenecks(
+        arrivals_modifier_pct=arrivals,
+        staff_shortage=staff_shortage,
+        season=season,
+        scanner_available=scanner_available,
+    )
+
+
+@app.get("/api/forecasting/backtest")
+def get_forecasting_backtest():
+    return calculate_backtest_validation()

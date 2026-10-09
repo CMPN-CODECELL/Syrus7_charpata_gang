@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { HashRouter, Routes, Route } from 'react-router-dom'
 import AppShell from './components/appshell'
 import Overview from './pages/overview'
 import PatientFlow from './pages/PatientFlow'
@@ -18,7 +18,7 @@ import Predictions from './pages/Predictions'
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route path="/" element={<AppShell />}>
           <Route index element={<Overview />} />
@@ -39,6 +39,6 @@ export default function App() {
           <Route path="predictions" element={<Predictions />} />
         </Route>
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   )
 }

@@ -1,4 +1,7 @@
 from contextlib import asynccontextmanager
+from datetime import datetime, timezone
+import random
+import time
 from typing import Optional
 
 from fastapi import FastAPI, Query
@@ -215,3 +218,59 @@ def get_forecasting_bottlenecks(
 @app.get("/api/forecasting/backtest")
 def get_forecasting_backtest():
     return calculate_backtest_validation()
+
+
+# STEP 8: CONTINUOUS LIVE TELEMETRY STREAM SIMULATION
+_TELEMETRY_START_TIME = time.time()
+
+
+@app.get("/api/telemetry/live")
+def get_live_telemetry():
+    """
+    Simulates real-time hospital telemetry stream refreshed on continuous 10s polling cycles.
+    Produces bounded natural sensor drift around baseline clinical metrics.
+    """
+    elapsed_seconds = int(time.time() - _TELEMETRY_START_TIME)
+    tick = elapsed_seconds // 10
+
+    # Deterministic pseudo-random seed per 10-second tick to ensure smooth fluctuations
+    rng = random.Random(tick)
+
+    # Base patient counts with realistic variations (+/- 2-3 patients)
+    ed_patients = 32 + rng.randint(-3, 4)
+    rad_patients = 26 + rng.randint(-2, 3)
+    icu_patients = 14 + rng.randint(-1, 2)
+    path_patients = 21 + rng.randint(-2, 2)
+    pharm_patients = 35 + rng.randint(-3, 3)
+
+    inbound_ambulances = max(0, 3 + rng.randint(-2, 2))
+    bed_occupied = 149 + rng.randint(-4, 5)
+    total_beds = 170
+
+    overall_load = round((bed_occupied / total_beds) * 100, 1)
+
+    return {
+        "status": "streaming",
+        "tick_id": tick,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "poll_interval_sec": 10,
+        "live_metrics": {
+            "hospital_census": {
+                "beds_occupied": bed_occupied,
+                "beds_total": total_beds,
+                "occupancy_rate_pct": overall_load,
+            },
+            "inbound_transfers": {
+                "active_ambulances": inbound_ambulances,
+                "eta_minutes": [rng.randint(4, 18) for _ in range(inbound_ambulances)],
+            },
+            "department_loads": [
+                {"department": "Emergency", "active_queue": ed_patients, "delta": rng.randint(-2, 2)},
+                {"department": "Radiology", "active_queue": rad_patients, "delta": rng.randint(-1, 2)},
+                {"department": "ICU", "active_queue": icu_patients, "delta": rng.randint(-1, 1)},
+                {"department": "Pathology", "active_queue": path_patients, "delta": rng.randint(-1, 2)},
+                {"department": "Pharmacy", "active_queue": pharm_patients, "delta": rng.randint(-2, 2)},
+            ],
+            "hospital_status": "Elevated Demand" if ed_patients > 34 else "Optimal Flow",
+        },
+    }

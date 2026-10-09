@@ -24,6 +24,7 @@ import {
   Sparkles,
   TrendingUp,
   User,
+  UserCheck,
   Users,
 } from 'lucide-react'
 
@@ -44,7 +45,7 @@ export default function AppShell() {
           setTelemetry(data)
         }
       } catch (err) {
-        // Fallback gracefully if backend is paused
+        // Fallback gracefully if backend is offline
       }
     }
 
@@ -67,7 +68,7 @@ export default function AppShell() {
         fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
       }}
     >
-      {/* LEFT SIDEBAR: Matches CarePulse AI Design System */}
+      {/* LEFT SIDEBAR: CarePulse AI / FlowGuard Command Navigation */}
       <aside
         style={{
           width: '260px',
@@ -128,7 +129,7 @@ export default function AppShell() {
             >
               <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 <span style={{ color: '#94a3b8', fontSize: '10px', display: 'block' }}>Hospital network</span>
-                <strong>St. Catherine Medical Centre</strong>
+                <strong>Surana Sethia Medical Centre</strong>
               </div>
               <ChevronDown size={14} color="#64748b" />
             </div>
@@ -160,6 +161,41 @@ export default function AppShell() {
             >
               <LayoutDashboard size={15} />
               <span>Overview</span>
+            </NavLink>
+
+            {/* Role-Based Hospital OS Nexus: Patient Intake, Team & Roles, Staff Scoped */}
+            <NavLink
+              to="/nexus"
+              style={({ isActive }) => ({
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                padding: '8px 10px',
+                borderRadius: '6px',
+                fontSize: '12px',
+                fontWeight: 700,
+                textDecoration: 'none',
+                background: isActive ? '#4338ca' : '#141625',
+                color: isActive ? '#ffffff' : '#a5b4fc',
+                border: '1px solid #2e355b',
+                margin: '2px 0',
+              })}
+            >
+              <Users size={15} color="#818cf8" />
+              <span>Team & Roles / Nexus</span>
+              <span
+                style={{
+                  marginLeft: 'auto',
+                  fontSize: '9px',
+                  fontWeight: 900,
+                  background: '#6366f1',
+                  color: '#ffffff',
+                  padding: '1px 5px',
+                  borderRadius: '4px',
+                }}
+              >
+                OS
+              </span>
             </NavLink>
 
             <NavLink
@@ -347,7 +383,6 @@ export default function AppShell() {
               <span>Reports</span>
             </NavLink>
 
-            {/* Weather / Disaster Emergency Surveillance from Image 2 & 3 */}
             <NavLink
               to="/mumbai-surveillance"
               style={({ isActive }) => ({
@@ -367,7 +402,6 @@ export default function AppShell() {
               <span>Mumbai Surveillance</span>
             </NavLink>
 
-            {/* Citizen Nearest Hospital Portal */}
             <NavLink
               to="/find-hospital"
               style={({ isActive }) => ({
@@ -388,7 +422,7 @@ export default function AppShell() {
             </NavLink>
 
             <NavLink
-              to="/sustainability"
+              to="/design-system"
               style={({ isActive }) => ({
                 display: 'flex',
                 alignItems: 'center',
@@ -442,9 +476,9 @@ export default function AppShell() {
         </div>
       </aside>
 
-      {/* MAIN VIEWPORT: Search bar header + Page content */}
+      {/* MAIN VIEWPORT */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, overflowX: 'hidden' }}>
-        {/* Top Header Bar from Screenshot */}
+        {/* Top Header Bar */}
         <header
           style={{
             height: '60px',
@@ -473,7 +507,7 @@ export default function AppShell() {
             <Search size={14} color="#94a3b8" />
             <input
               type="text"
-              placeholder="Search departments, reports, alerts..."
+              placeholder="Search departments, reports, allotments..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               style={{
